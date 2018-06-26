@@ -410,9 +410,9 @@ class CSharpCodeGenerator {
     codeWriter.writeLine()
     codeWriter.indent()
 
-    // Constructor
-    this.writeConstructor(codeWriter, elem, options)
-    codeWriter.writeLine()
+    // 构造函数
+   // this.writeConstructor(codeWriter, elem, options)
+   // codeWriter.writeLine()
 
     // Member Variables
     // (from attributes)
@@ -611,19 +611,20 @@ class CSharpCodeGenerator {
       // name
       terms.push(elem.name)
 
-
-      // property
-      if (elem.stereotype === 'property') {
-        terms.push('{')
-        if (elem.isReadOnly) {
-          terms.push('get;')
-        } else {
-          terms.push('get; set;')
-        }
-        terms.push('}')      
+      // getter setter
+      terms.push('{')
+      if (elem.isReadOnly) {
+        terms.push('get;')
       } else {
-        terms.push(';')   
+        terms.push('get; set;')
       }
+      terms.push('}')    
+      // property
+      //if (elem.stereotype === 'property') {
+        
+     // } else {
+     //   terms.push(';')   
+     // }
       // initial value
       if (elem.defaultValue && elem.defaultValue.length > 0) {
         terms.push(' = ' + elem.defaultValue + ';')
