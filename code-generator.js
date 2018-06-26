@@ -108,6 +108,7 @@ class CSharpCodeGenerator {
         codeWriter.writeLine('using System.Collections.Generic;')
         codeWriter.writeLine('using System.Linq;')
         codeWriter.writeLine('using System.Text;')
+        codeWriter.writeLine('using Siia.Core.Util.Domains;')
         codeWriter.writeLine()
         // this.writeClass(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeClass', codeWriter, elem, options, isAnnotationType)
@@ -385,7 +386,7 @@ class CSharpCodeGenerator {
     // Doc
     var doc = elem.documentation.trim()
     if (app.project.getProject().author && app.project.getProject().author.length > 0) {
-      doc += '\n@author ' + app.project.getProject().author
+      doc += '\n@作者 ' + app.project.getProject().author
     }
     this.writeDoc(codeWriter, doc, options)
 
@@ -406,6 +407,8 @@ class CSharpCodeGenerator {
     var _extends = this.getSuperClasses(elem)
     if (_extends.length > 0) {
       terms.push(': ' + _extends[0].name)
+    }else{
+      terms.push(': AggregateRoot')
     }
 
     // Implements
@@ -591,9 +594,9 @@ class CSharpCodeGenerator {
     if (elem.multiplicity) {
       if (['0..*', '1..*', '*'].includes(elem.multiplicity.trim())) {
         if (elem.isOrdered === true) {
-          _type = 'List<' + _type + '>'
+          _type = 'virtual IList<' + _type + '>'
         } else {
-          _type = 'HashSet<' + _type + '>'
+          _type = 'virtual ICollection<' + _type + '>'
         }
       } else if (elem.multiplicity !== '1' && elem.multiplicity.match(/^\d+$/)) { // number
         _type += '[]'
@@ -622,25 +625,25 @@ class CSharpCodeGenerator {
       terms.push(this.getType(elem))
       // name
       terms.push(elem.name)
-      // initial value
-      if (elem.defaultValue && elem.defaultValue.length > 0) {
-        terms.push('= ' + elem.defaultValue)
-      }
+
 
       // property
       if (elem.stereotype === 'property') {
         codeWriter.writeLine(terms.join(' ') + ' {')
-        codeWriter.indent()
+       // codeWriter.indent()
         if (elem.isReadOnly) {
-          codeWriter.writeLine('get {')
-          codeWriter.writeLine('}')
+          codeWriter.writeLine('get;')
         } else {
           codeWriter.writeLine('get; set;')
         }
-        codeWriter.outdent()
-        codeWriter.writeLine('}')
+      //  codeWriter.outdent()
+        codeWriter.writeLine(' }')
       } else {
         codeWriter.writeLine(terms.join(' ') + ';')
+      }
+      // initial value
+      if (elem.defaultValue && elem.defaultValue.length > 0) {
+        terms.push(' = ' + elem.defaultValue)
       }
     }
   }
