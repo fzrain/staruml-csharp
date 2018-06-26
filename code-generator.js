@@ -81,6 +81,15 @@ class CSharpCodeGenerator {
         })
       }
     } else if (elem instanceof type.UMLClass) {
+      fullPath = basePath + '/' + elem.name + '.cs'
+      codeWriter = new codegen.CodeWriter(this.getIndentString(options))
+      codeWriter.writeLine('/*在这里可以写一些说明!')
+      codeWriter.writeLine('*/')
+      codeWriter.writeLine('using System;')
+      codeWriter.writeLine('using System.Collections.Generic;')
+      codeWriter.writeLine('using System.Linq;')
+      codeWriter.writeLine('using System.Text;')    
+      codeWriter.writeLine()
       // AnnotationType
       if (isAnnotationType) {
         if (elem.name.length < 9) {
@@ -88,54 +97,20 @@ class CSharpCodeGenerator {
         } else if (elem.name.substring(elem.name.length - 9, elem.name.length) !== 'Attribute') {
           elem.name = elem.name + 'Attribute'
         }
-        fullPath = basePath + '/' + elem.name + '.cs'
-        codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-        codeWriter.writeLine()
-        codeWriter.writeLine('using System;')
-        codeWriter.writeLine('using System.Collections.Generic;')
-        codeWriter.writeLine('using System.Linq;')
-        codeWriter.writeLine('using System.Text;')
-        codeWriter.writeLine()
-        // this.writeAnnotationType(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeAnnotationType', codeWriter, elem, options, isAnnotationType)
-        fs.writeFileSync(fullPath, codeWriter.getData())
       } else {
         // Class
-        fullPath = path.join(basePath, elem.name + '.cs')
-        codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-        codeWriter.writeLine()
-        codeWriter.writeLine('using System;')
-        codeWriter.writeLine('using System.Collections.Generic;')
-        codeWriter.writeLine('using System.Linq;')
-        codeWriter.writeLine('using System.Text;')
         codeWriter.writeLine('using Siia.Core.Util.Domains;')
-        codeWriter.writeLine()
-        // this.writeClass(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeClass', codeWriter, elem, options, isAnnotationType)
-        fs.writeFileSync(fullPath, codeWriter.getData())
       }
     } else if (elem instanceof type.UMLInterface) {
       // Interface
-      fullPath = basePath + '/' + elem.name + '.cs'
-      codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-      codeWriter.writeLine()
-      codeWriter.writeLine('using System;')
-      codeWriter.writeLine('using System.Collections.Generic;')
-      codeWriter.writeLine('using System.Linq;')
-      codeWriter.writeLine('using System.Text;')
-      codeWriter.writeLine()
-      // this.writeInterface(codeWriter, elem, options);
       this.writeNamespace('writeInterface', codeWriter, elem, options, isAnnotationType)
-      fs.writeFileSync(fullPath, codeWriter.getData())
-    } else if (elem instanceof type.UMLEnumeration) {
-      // Enum
-      fullPath = basePath + '/' + elem.name + '.cs'
-      codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-      codeWriter.writeLine()
-      // this.writeEnum(codeWriter, elem, options);
+    } 
+    else if (elem instanceof type.UMLEnumeration) {
       this.writeNamespace('writeEnum', codeWriter, elem, options, isAnnotationType)
-      fs.writeFileSync(fullPath, codeWriter.getData())
     }
+    fs.writeFileSync(fullPath, codeWriter.getData())
   }
 
   /**
@@ -151,7 +126,8 @@ class CSharpCodeGenerator {
       path = elem._parent.getPath(this.baseModel).map(function (e) { return e.name }).join('.')
     }
     if (path) {
-      codeWriter.writeLine('namespace ' + path + '{')
+      codeWriter.writeLine('namespace ' + path)
+      codeWriter.writeLine('{')
       codeWriter.indent()
     }
     if (writeFunction === 'writeAnnotationType') {
@@ -421,7 +397,8 @@ class CSharpCodeGenerator {
       }
     }
 
-    codeWriter.writeLine(terms.join(' ') + ' {')
+    codeWriter.writeLine(terms.join(' '))
+    codeWriter.writeLine('{')
     codeWriter.writeLine()
     codeWriter.indent()
 
@@ -538,7 +515,7 @@ class CSharpCodeGenerator {
       } else {
         codeWriter.writeLine(terms.join(' ') + ' {')
         codeWriter.indent()
-        codeWriter.writeLine('// TODO implement here')
+        codeWriter.writeLine('// todo: implement here')
 
         // return statement
         if (returnParam) {
@@ -629,22 +606,21 @@ class CSharpCodeGenerator {
 
       // property
       if (elem.stereotype === 'property') {
-        codeWriter.writeLine(terms.join(' ') + ' {')
-       // codeWriter.indent()
+        terms.push('{')
         if (elem.isReadOnly) {
-          codeWriter.writeLine('get;')
+          terms.push('get;')
         } else {
-          codeWriter.writeLine('get; set;')
+          terms.push('get; set;')
         }
-      //  codeWriter.outdent()
-        codeWriter.writeLine(' }')
+        terms.push('}')      
       } else {
-        codeWriter.writeLine(terms.join(' ') + ';')
+        terms.push(';')   
       }
       // initial value
       if (elem.defaultValue && elem.defaultValue.length > 0) {
-        terms.push(' = ' + elem.defaultValue)
+        terms.push(' = ' + elem.defaultValue + ';')
       }
+      codeWriter.writeLine(terms.join(' '))
     }
   }
 
@@ -665,7 +641,8 @@ class CSharpCodeGenerator {
         terms.push(visibility)
       }
       terms.push(elem.name + '()')
-      codeWriter.writeLine(terms.join(' ') + ' {')
+      codeWriter.writeLine(terms.join(' '))
+      codeWriter.writeLine('{')
       codeWriter.writeLine('}')
     }
   }
