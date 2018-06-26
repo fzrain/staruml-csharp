@@ -83,13 +83,14 @@ class CSharpCodeGenerator {
     } else if (elem instanceof type.UMLClass) {
       fullPath = basePath + '/' + elem.name + '.cs'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-      codeWriter.writeLine('/*在这里可以写一些说明!')
+      codeWriter.writeLine('/*')
+      codeWriter.writeLine('在这里可以写一些说明!')
       codeWriter.writeLine('*/')
       codeWriter.writeLine('using System;')
       codeWriter.writeLine('using System.Collections.Generic;')
       codeWriter.writeLine('using System.Linq;')
       codeWriter.writeLine('using System.Text;')    
-      codeWriter.writeLine()
+     // codeWriter.writeLine()
       // AnnotationType
       if (isAnnotationType) {
         if (elem.name.length < 9) {
@@ -97,17 +98,22 @@ class CSharpCodeGenerator {
         } else if (elem.name.substring(elem.name.length - 9, elem.name.length) !== 'Attribute') {
           elem.name = elem.name + 'Attribute'
         }
+        codeWriter.writeLine()
         this.writeNamespace('writeAnnotationType', codeWriter, elem, options, isAnnotationType)
       } else {
         // Class
+        fullPath = path.join(basePath, elem.name + '.cs')
         codeWriter.writeLine('using Siia.Core.Util.Domains;')
+        codeWriter.writeLine()
         this.writeNamespace('writeClass', codeWriter, elem, options, isAnnotationType)
       }
     } else if (elem instanceof type.UMLInterface) {
       // Interface
+      codeWriter.writeLine()
       this.writeNamespace('writeInterface', codeWriter, elem, options, isAnnotationType)
     } 
     else if (elem instanceof type.UMLEnumeration) {
+      codeWriter.writeLine()
       this.writeNamespace('writeEnum', codeWriter, elem, options, isAnnotationType)
     }
     fs.writeFileSync(fullPath, codeWriter.getData())
@@ -363,6 +369,8 @@ class CSharpCodeGenerator {
     var doc = elem.documentation.trim()
     if (app.project.getProject().author && app.project.getProject().author.length > 0) {
       doc += '\n@作者 ' + app.project.getProject().author
+      doc += '\n@模块名称 ' + app.project.getProject().name
+      doc += '\n@版本 ' + app.project.getProject().version
     }
     this.writeDoc(codeWriter, doc, options)
 
