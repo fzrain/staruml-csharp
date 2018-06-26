@@ -81,16 +81,6 @@ class CSharpCodeGenerator {
         })
       }
     } else if (elem instanceof type.UMLClass) {
-      fullPath = basePath + '/' + elem.name + '.cs'
-      codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-      codeWriter.writeLine('/*')
-      codeWriter.writeLine('在这里可以写一些说明!')
-      codeWriter.writeLine('*/')
-      codeWriter.writeLine('using System;')
-      codeWriter.writeLine('using System.Collections.Generic;')
-      codeWriter.writeLine('using System.Linq;')
-      codeWriter.writeLine('using System.Text;')    
-     // codeWriter.writeLine()
       // AnnotationType
       if (isAnnotationType) {
         if (elem.name.length < 9) {
@@ -98,25 +88,53 @@ class CSharpCodeGenerator {
         } else if (elem.name.substring(elem.name.length - 9, elem.name.length) !== 'Attribute') {
           elem.name = elem.name + 'Attribute'
         }
+        fullPath = basePath + '/' + elem.name + '.cs'
+        codeWriter = new codegen.CodeWriter(this.getIndentString(options))
         codeWriter.writeLine()
+        codeWriter.writeLine('using System;')
+        codeWriter.writeLine('using System.Collections.Generic;')
+        codeWriter.writeLine('using System.Linq;')
+        codeWriter.writeLine('using System.Text;')
+        codeWriter.writeLine()
+        // this.writeAnnotationType(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeAnnotationType', codeWriter, elem, options, isAnnotationType)
+        fs.writeFileSync(fullPath, codeWriter.getData())
       } else {
         // Class
         fullPath = path.join(basePath, elem.name + '.cs')
-        codeWriter.writeLine('using Siia.Core.Util.Domains;')
+        codeWriter = new codegen.CodeWriter(this.getIndentString(options))
         codeWriter.writeLine()
+        codeWriter.writeLine('using System;')
+        codeWriter.writeLine('using System.Collections.Generic;')
+        codeWriter.writeLine('using System.Linq;')
+        codeWriter.writeLine('using System.Text;')
+        codeWriter.writeLine()
+        // this.writeClass(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeClass', codeWriter, elem, options, isAnnotationType)
+        fs.writeFileSync(fullPath, codeWriter.getData())
       }
     } else if (elem instanceof type.UMLInterface) {
       // Interface
+      fullPath = basePath + '/' + elem.name + '.cs'
+      codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine()
+      codeWriter.writeLine('using System;')
+      codeWriter.writeLine('using System.Collections.Generic;')
+      codeWriter.writeLine('using System.Linq;')
+      codeWriter.writeLine('using System.Text;')
+      codeWriter.writeLine()
+      // this.writeInterface(codeWriter, elem, options);
       this.writeNamespace('writeInterface', codeWriter, elem, options, isAnnotationType)
-    } 
-    else if (elem instanceof type.UMLEnumeration) {
+      fs.writeFileSync(fullPath, codeWriter.getData())
+    } else if (elem instanceof type.UMLEnumeration) {
+      // Enum
+      fullPath = basePath + '/' + elem.name + '.cs'
+      codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine()
+      // this.writeEnum(codeWriter, elem, options);
       this.writeNamespace('writeEnum', codeWriter, elem, options, isAnnotationType)
+      fs.writeFileSync(fullPath, codeWriter.getData())
     }
-    fs.writeFileSync(fullPath, codeWriter.getData())
   }
 
   /**
