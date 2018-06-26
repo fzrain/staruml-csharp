@@ -1,13 +1,13 @@
 {
-  "name": "staruml.csharp",
-  "title": "C#",
-  "description": "C# code generation and reverse engineering.",
+  "name": "siia.staruml.csharp",
+  "title": "驰亚领域模型生成器",
+  "description": "根据UML生成领域模型",
   "homepage": "https://github.com/fzrain/staruml-csharp",
   "issues": "https://github.com/fzrain/staruml-csharp/issues",  
-  "keywords": ["csharp"],
+  "keywords": ["siiaweb"],
   "version": "1.0.0",
   "author": {
-    "name": "fzrain",
+    "name": "驰亚云辉殿",
     "email": "fzrain@hotmail.com",
     "url": "https://github.com/fzrain"
   },
