@@ -87,7 +87,6 @@ class CSharpCodeGenerator {
     codeWriter.writeLine('using System.Linq;')
     codeWriter.writeLine('using System.Text;')
     codeWriter.writeLine('using Siia.Core.Util.Domains;')
-    codeWriter.writeLine()
     // Package
     if (elem instanceof type.UMLPackage) {
       fullPath = path.join(basePath, elem.name)
@@ -107,7 +106,6 @@ class CSharpCodeGenerator {
         }
    
         codeWriter.writeLine()
-        // this.writeAnnotationType(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeAnnotationType', codeWriter, elem, options, isAnnotationType)
         fs.writeFileSync(fullPath, codeWriter.getData())
       } else {
@@ -119,13 +117,11 @@ class CSharpCodeGenerator {
     } else if (elem instanceof type.UMLInterface) {
       // Interface  
       codeWriter.writeLine()
-      // this.writeInterface(codeWriter, elem, options);
       this.writeNamespace('writeInterface', codeWriter, elem, options, isAnnotationType)
       fs.writeFileSync(fullPath, codeWriter.getData())
     } else if (elem instanceof type.UMLEnumeration) {
       // Enum
       codeWriter.writeLine()
-      // this.writeEnum(codeWriter, elem, options);
       this.writeNamespace('writeEnum', codeWriter, elem, options, isAnnotationType)
       fs.writeFileSync(fullPath, codeWriter.getData())
     }
@@ -382,7 +378,7 @@ class CSharpCodeGenerator {
     //if (app.project.getProject().author && app.project.getProject().author.length > 0) {
      // doc += '\n@作者 ' + app.project.getProject().author
      // doc += '\n@模块名称 ' + app.project.getProject().name
-     //doc += '\n@版本 ' + app.project.getProject().version
+     // doc += '\n@版本 ' + app.project.getProject().version
     //}
     this.writeDoc(codeWriter, doc, options)
 
@@ -395,19 +391,22 @@ class CSharpCodeGenerator {
       terms.push(_modifiers.join(' '))
     }
 
-    // Class
+    // 默认都是分部类
+    terms.push('partial')
     terms.push('class')
     terms.push(elem.name)
 
-    // Extends
+    // 继承
     var _extends = this.getSuperClasses(elem)
     if (_extends.length > 0) {
       terms.push(': ' + _extends[0].name)
+    }else if(elem.stereotype === 'EntityBase'){
+      terms.push(': EntityBase')
     }else{
       terms.push(': AggregateRoot')
     }
 
-    // Implements
+    // 实现接口
     var _implements = this.getSuperInterfaces(elem)
     if (_implements.length > 0) {
       if (_extends.length > 0) {
@@ -422,17 +421,17 @@ class CSharpCodeGenerator {
     codeWriter.writeLine()
     codeWriter.indent()
 
-    // 构造函数
+    // 生成构造函数
    // this.writeConstructor(codeWriter, elem, options)
    // codeWriter.writeLine()
 
-    // Member Variables
-    // (from attributes)
+    // C#属性
+    // (普通属性)
     for (i = 0, len = elem.attributes.length; i < len; i++) {
       this.writeMemberVariable(codeWriter, elem.attributes[i], options)
       codeWriter.writeLine()
     }
-    // (from associations)
+    // (导航属性)
     var associations = app.repository.getRelationshipsOf(elem, function (rel) {
       return (rel instanceof type.UMLAssociation)
     })
@@ -448,7 +447,7 @@ class CSharpCodeGenerator {
       }
     }
 
-    // Methods
+    // 方法
     for (i = 0, len = elem.operations.length; i < len; i++) {
       this.writeMethod(codeWriter, elem.operations[i], options, false, false)
       codeWriter.writeLine()
@@ -493,13 +492,16 @@ class CSharpCodeGenerator {
 
       // doc
       var doc = elem.documentation.trim()
+      this.writeDoc(codeWriter, doc, options)
       params.forEach(function (param) {
-        doc += '\n@param ' + param.name + ' ' + param.documentation
+        codeWriter.writeLine('/// <param name="'+param.name+'">'+param.documentation+'</param>')
+        //doc += '\n@param ' + param.name + ' ' + param.documentation
       })
       if (returnParam) {
-        doc += '\n@return ' + returnParam.documentation
+        codeWriter.writeLine('/// <returns>'+returnParam.documentation+'</returns>')
+        //doc += '\n@return ' + returnParam.documentation
       }
-      this.writeDoc(codeWriter, doc, options)
+      
 
       // modifiers
       var _modifiers = this.getModifiers(elem)
@@ -535,7 +537,7 @@ class CSharpCodeGenerator {
       } else {
         codeWriter.writeLine(terms.join(' ') + ' {')
         codeWriter.indent()
-        codeWriter.writeLine('// todo: implement here')
+        codeWriter.writeLine('// todo:实现你自己的逻辑')
 
         // return statement
         if (returnParam) {
@@ -568,7 +570,7 @@ class CSharpCodeGenerator {
   };
 
   /**
-   * Return type expression
+   * 获取类型
    * @param {type.Model} elem
    * @return {string}
    */
@@ -587,16 +589,16 @@ class CSharpCodeGenerator {
       }
     }
 
-    // multiplicity
+    // 一对多配置
     if (elem.multiplicity) {
       if (['0..*', '1..*', '*'].includes(elem.multiplicity.trim())) {
-        if (elem.isOrdered === true) {
+        if (elem.isOrdered === true) {//集合类型
           _type = 'virtual IList<' + _type + '>'
         } else {
           _type = 'virtual ICollection<' + _type + '>'
         }
-      } else if (elem.multiplicity !== '1' && elem.multiplicity.match(/^\d+$/)) { // number
-        _type += '[]'
+      } else if(['0..1', '1'].includes(elem.multiplicity.trim())) { // 实体类型
+        _type = 'virtual ' + _type
       }
     }
     return _type
@@ -622,6 +624,7 @@ class CSharpCodeGenerator {
       terms.push(this.getType(elem))
       // name
       terms.push(elem.name)
+     
 
       // getter setter
       terms.push('{')
