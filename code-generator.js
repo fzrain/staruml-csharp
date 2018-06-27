@@ -71,6 +71,7 @@ class CSharpCodeGenerator {
   generate (elem, basePath, options) {
     var fullPath, codeWriter
     var isAnnotationType = elem.stereotype === 'annotationType'
+    fullPath = basePath + '/' + elem.name + '.cs'
     // Package
     if (elem instanceof type.UMLPackage) {
       fullPath = path.join(basePath, elem.name)
@@ -102,7 +103,7 @@ class CSharpCodeGenerator {
       } else {
         // Class
         //fullPath = path.join(basePath, elem.name + '.cs')
-        fullPath = basePath + '/' + elem.name + '.cs'
+      //  fullPath = basePath + '/' + elem.name + '.cs'
         codeWriter = new codegen.CodeWriter(this.getIndentString(options))
         codeWriter.writeLine()
         codeWriter.writeLine('using System;')
@@ -117,7 +118,7 @@ class CSharpCodeGenerator {
       }
     } else if (elem instanceof type.UMLInterface) {
       // Interface
-      fullPath = basePath + '/' + elem.name + '.cs'
+     // fullPath = basePath + '/' + elem.name + '.cs'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine()
       codeWriter.writeLine('using System;')
