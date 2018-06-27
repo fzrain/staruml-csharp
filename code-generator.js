@@ -609,16 +609,17 @@ class CSharpCodeGenerator {
    * @param {Object} options
    */
   writeMemberVariable (codeWriter, elem, options) {
+    var propertyName=elem.name;
     if (elem instanceof type.UMLAssociationEnd) {
       if (elem.reference instanceof type.UMLModelElement) {
-        elem.name = elem.reference.name
+        propertyName = elem.reference.name
       }
       if (elem.multiplicity&&['0..*', '1..*', '*'].includes(elem.multiplicity.trim())) {
-        elem.name = elem.reference.name +"s"
+        propertyName = elem.reference.name +"s"
       }
     }
     
-    if (elem.name.length > 0) {
+    if (propertyName.length > 0) {
       var terms = []
       // doc
       this.writeDoc(codeWriter, elem.documentation, options)
@@ -630,7 +631,7 @@ class CSharpCodeGenerator {
       // type
       terms.push(this.getType(elem))
       // name
-      terms.push(elem.name)
+      terms.push(propertyName)
      
 
       // 自动属性 getter setter
