@@ -4,13 +4,13 @@
       "id": "tools",
       "submenu": [
         {
-          "label": "C#",
+          "label": "驰亚代码生成器(白金版)",
           "id": "tools.csharp",
           "submenu": [
-            { "label": "Generate Code...", "id": "tools.csharp.generate", "command": "csharp:generate" },
-            { "label": "Reverse Code...", "id": "tools.csharp.reverse", "command": "csharp:reverse" },
+            { "label": "生成公司框架相关的所有代码", "id": "tools.csharp.generate", "command": "csharp:generate" },
+            { "label": "仅生成领域模型", "id": "tools.csharp.generate", "command": "csharp:generate" },
             { "type": "separator" },
-            { "label": "Configure...", "id": "tools.csharp.configure", "command": "csharp:configure" }
+            { "label": "插件配置", "id": "tools.csharp.configure", "command": "csharp:configure" }
           ]
         }
       ]

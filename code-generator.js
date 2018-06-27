@@ -101,13 +101,15 @@ class CSharpCodeGenerator {
         fs.writeFileSync(fullPath, codeWriter.getData())
       } else {
         // Class
-        fullPath = path.join(basePath, elem.name + '.cs')
+        //fullPath = path.join(basePath, elem.name + '.cs')
+        fullPath = basePath + '/' + elem.name + '.cs'
         codeWriter = new codegen.CodeWriter(this.getIndentString(options))
         codeWriter.writeLine()
         codeWriter.writeLine('using System;')
         codeWriter.writeLine('using System.Collections.Generic;')
         codeWriter.writeLine('using System.Linq;')
         codeWriter.writeLine('using System.Text;')
+        codeWriter.writeLine('using Siia.Core.Util.Domains;')
         codeWriter.writeLine()
         // this.writeClass(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeClass', codeWriter, elem, options, isAnnotationType)
