@@ -113,7 +113,8 @@ class CSharpCodeGenerator {
 
         codeWriter.writeLine()
         this.writeNamespace('writeClass', codeWriter, elem, options, isAnnotationType)
-        fs.writeFileSync(basePath+'/Domain/Entities/' + elem.name + '.cs', codeWriter.getData())
+       // fs.writeFileSync(basePath+'/Domain/Entities/' + elem.name + '.cs', codeWriter.getData())
+        fs.writeFileSync(fullPath, codeWriter.getData())
       }
     } else if (elem instanceof type.UMLInterface) {
       // Interface  
