@@ -137,7 +137,8 @@ class CSharpCodeGenerator {
   writeNamespace (writeFunction, codeWriter, elem, options) {
     var path = null
     if (elem._parent) {
-      path = elem._parent.getPath(this.baseModel).map(function (e) { return e.name }).join('.')
+      //path = elem._parent.getPath(this.baseModel).map(function (e) { return e.name }).join('.')
+      path = elem._parent.name
     }
     if (path) {
       codeWriter.writeLine('namespace ' + path)
@@ -405,11 +406,7 @@ class CSharpCodeGenerator {
     // 实现接口
     var _implements = this.getSuperInterfaces(elem)
     if (_implements.length > 0) {
-      if (_extends.length > 0) {
-        terms.push(', ' + _implements.map(function (e) { return e.name }).join(', '))
-      } else {
-        terms.push(': ' + _implements.map(function (e) { return e.name }).join(', '))
-      }
+      terms.push(', ' + _implements.map(function (e) { return e.name }).join(', '))
     }
 
     codeWriter.writeLine(terms.join(' '))
@@ -615,11 +612,11 @@ class CSharpCodeGenerator {
         propertyName = elem.reference.name +"s"
       }
       else if(elem.multiplicity.trim()=='0..1'){
-        this.writeDoc(codeWriter, propertyName+"关联外键Id", options)
-        codeWriter.writeLine('public int? '+propertyName+'_Id { get; set; }')
+        this.writeDoc(codeWriter, propertyName+"实体关联外键Id", options)
+        codeWriter.writeLine('public int? '+propertyName+'Id { get; set; }')
       }else if(elem.multiplicity.trim()=='1'){
-        this.writeDoc(codeWriter, propertyName+"关联外键Id", options)
-        codeWriter.writeLine('public int '+propertyName+'_Id { get; set; }')
+        this.writeDoc(codeWriter, propertyName+"实体关联外键Id", options)
+        codeWriter.writeLine('public int '+propertyName+'Id { get; set; }')
       }
     }
     
