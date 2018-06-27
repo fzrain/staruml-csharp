@@ -71,6 +71,7 @@ class CSharpCodeGenerator {
   generate (elem, basePath, options) {
     var fullPath, codeWriter
     var isAnnotationType = elem.stereotype === 'annotationType'
+    fullPath = basePath + '/' + elem.name + '.cs'
     codeWriter = new codegen.CodeWriter(this.getIndentString(options))
     codeWriter.writeLine('//----------------------------------------------------------------')
     codeWriter.writeLine('// Copyright (C) '+new Date().getFullYear()+' 上海驰亚信息技术有限公司')
@@ -109,7 +110,7 @@ class CSharpCodeGenerator {
         fs.writeFileSync(fullPath, codeWriter.getData())
       } else {
         // Class
-        fullPath = basePath +'/Domain/Entities/'
+        fullPath = basePath +'/Domain/Entities'
         fs.mkdirSync(fullPath)
         codeWriter.writeLine()
         this.writeNamespace('writeClass', codeWriter, elem, options, isAnnotationType)
