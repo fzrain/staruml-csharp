@@ -375,11 +375,7 @@ class CSharpCodeGenerator {
 
     // Doc
     var doc = elem.documentation.trim()
-    //if (app.project.getProject().author && app.project.getProject().author.length > 0) {
-     // doc += '\n@作者 ' + app.project.getProject().author
-     // doc += '\n@模块名称 ' + app.project.getProject().name
-     // doc += '\n@版本 ' + app.project.getProject().version
-    //}
+
     this.writeDoc(codeWriter, doc, options)
 
     // Modifiers
@@ -533,7 +529,8 @@ class CSharpCodeGenerator {
       if (skipBody === true || _modifiers.includes('abstract')) {
         codeWriter.writeLine(terms.join(' ') + ';')
       } else {
-        codeWriter.writeLine(terms.join(' ') + ' {')
+        codeWriter.writeLine(terms.join(' '))
+        codeWriter.writeLine('{')
         codeWriter.indent()
         codeWriter.writeLine('// todo:实现你自己的逻辑')
 
@@ -616,6 +613,13 @@ class CSharpCodeGenerator {
       }
       if (elem.multiplicity&&['0..*', '1..*', '*'].includes(elem.multiplicity.trim())) {
         propertyName = elem.reference.name +"s"
+      }
+      else if(elem.multiplicity.trim()=='0..1'){
+        this.writeDoc(codeWriter, propertyName+"关联外键Id", options)
+        codeWriter.writeLine('public int? '+propertyName+'_Id { get; set; }')
+      }else if(elem.multiplicity.trim()=='1'){
+        this.writeDoc(codeWriter, propertyName+"关联外键Id", options)
+        codeWriter.writeLine('public int '+propertyName+'_Id { get; set; }')
       }
     }
     
