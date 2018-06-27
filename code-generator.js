@@ -495,11 +495,9 @@ class CSharpCodeGenerator {
       this.writeDoc(codeWriter, doc, options)
       params.forEach(function (param) {
         codeWriter.writeLine('/// <param name="'+param.name+'">'+param.documentation+'</param>')
-        //doc += '\n@param ' + param.name + ' ' + param.documentation
       })
       if (returnParam) {
         codeWriter.writeLine('/// <returns>'+returnParam.documentation+'</returns>')
-        //doc += '\n@return ' + returnParam.documentation
       }
       
 
@@ -611,6 +609,15 @@ class CSharpCodeGenerator {
    * @param {Object} options
    */
   writeMemberVariable (codeWriter, elem, options) {
+    if (elem instanceof type.UMLAssociationEnd) {
+      if (elem.reference instanceof type.UMLModelElement) {
+        elem.name = elem.reference.name
+      }
+      if (elem.multiplicity&&['0..*', '1..*', '*'].includes(elem.multiplicity.trim())) {
+        elem.name = elem.reference.name +"s"
+      }
+    }
+    
     if (elem.name.length > 0) {
       var terms = []
       // doc
@@ -626,7 +633,7 @@ class CSharpCodeGenerator {
       terms.push(elem.name)
      
 
-      // getter setter
+      // 自动属性 getter setter
       terms.push('{')
       if (elem.isReadOnly) {
         terms.push('get;')
