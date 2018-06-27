@@ -72,6 +72,22 @@ class CSharpCodeGenerator {
     var fullPath, codeWriter
     var isAnnotationType = elem.stereotype === 'annotationType'
     fullPath = basePath + '/' + elem.name + '.cs'
+    codeWriter = new codegen.CodeWriter(this.getIndentString(options))
+    codeWriter.writeLine('//----------------------------------------------------------------')
+    codeWriter.writeLine('// Copyright (C) '+new Date().getFullYear()+' 上海驰亚信息技术有限公司')
+    codeWriter.writeLine('// 版权所有。')
+    codeWriter.writeLine('// All rights reserved.')
+    codeWriter.writeLine('//')
+    codeWriter.writeLine('// 文件名: '+elem.name+".cs")
+    codeWriter.writeLine('// 文件功能描述:')
+    codeWriter.writeLine('// 创建标识：云辉殿 '+new Date().toLocaleString())
+    codeWriter.writeLine('//-----------------------------------------------------------------')
+    codeWriter.writeLine('using System;')
+    codeWriter.writeLine('using System.Collections.Generic;')
+    codeWriter.writeLine('using System.Linq;')
+    codeWriter.writeLine('using System.Text;')
+    codeWriter.writeLine('using Siia.Core.Util.Domains;')
+    codeWriter.writeLine()
     // Package
     if (elem instanceof type.UMLPackage) {
       fullPath = path.join(basePath, elem.name)
@@ -89,50 +105,25 @@ class CSharpCodeGenerator {
         } else if (elem.name.substring(elem.name.length - 9, elem.name.length) !== 'Attribute') {
           elem.name = elem.name + 'Attribute'
         }
-        fullPath = basePath + '/' + elem.name + '.cs'
-        codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-        codeWriter.writeLine()
-        codeWriter.writeLine('using System;')
-        codeWriter.writeLine('using System.Collections.Generic;')
-        codeWriter.writeLine('using System.Linq;')
-        codeWriter.writeLine('using System.Text;')
+   
         codeWriter.writeLine()
         // this.writeAnnotationType(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeAnnotationType', codeWriter, elem, options, isAnnotationType)
         fs.writeFileSync(fullPath, codeWriter.getData())
       } else {
         // Class
-        //fullPath = path.join(basePath, elem.name + '.cs')
-      //  fullPath = basePath + '/' + elem.name + '.cs'
-        codeWriter = new codegen.CodeWriter(this.getIndentString(options))
         codeWriter.writeLine()
-        codeWriter.writeLine('using System;')
-        codeWriter.writeLine('using System.Collections.Generic;')
-        codeWriter.writeLine('using System.Linq;')
-        codeWriter.writeLine('using System.Text;')
-        codeWriter.writeLine('using Siia.Core.Util.Domains;')
-        codeWriter.writeLine()
-        // this.writeClass(codeWriter, elem, options, isAnnotationType);
         this.writeNamespace('writeClass', codeWriter, elem, options, isAnnotationType)
         fs.writeFileSync(fullPath, codeWriter.getData())
       }
     } else if (elem instanceof type.UMLInterface) {
-      // Interface
-     // fullPath = basePath + '/' + elem.name + '.cs'
-      codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-      codeWriter.writeLine()
-      codeWriter.writeLine('using System;')
-      codeWriter.writeLine('using System.Collections.Generic;')
-      codeWriter.writeLine('using System.Linq;')
-      codeWriter.writeLine('using System.Text;')
+      // Interface  
       codeWriter.writeLine()
       // this.writeInterface(codeWriter, elem, options);
       this.writeNamespace('writeInterface', codeWriter, elem, options, isAnnotationType)
       fs.writeFileSync(fullPath, codeWriter.getData())
     } else if (elem instanceof type.UMLEnumeration) {
       // Enum
-      fullPath = basePath + '/' + elem.name + '.cs'
-      codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine()
       // this.writeEnum(codeWriter, elem, options);
       this.writeNamespace('writeEnum', codeWriter, elem, options, isAnnotationType)
@@ -299,7 +290,7 @@ class CSharpCodeGenerator {
     // Doc
     var doc = elem.documentation.trim()
     if (app.project.getProject().author && app.project.getProject().author.length > 0) {
-      doc += '\n@author ' + app.project.getProject().author
+      //doc += '\n@author ' + app.project.getProject().author
     }
     this.writeDoc(codeWriter, doc, options)
 
@@ -388,11 +379,11 @@ class CSharpCodeGenerator {
 
     // Doc
     var doc = elem.documentation.trim()
-    if (app.project.getProject().author && app.project.getProject().author.length > 0) {
-      doc += '\n@作者 ' + app.project.getProject().author
-      doc += '\n@模块名称 ' + app.project.getProject().name
-      doc += '\n@版本 ' + app.project.getProject().version
-    }
+    //if (app.project.getProject().author && app.project.getProject().author.length > 0) {
+     // doc += '\n@作者 ' + app.project.getProject().author
+     // doc += '\n@模块名称 ' + app.project.getProject().name
+     //doc += '\n@版本 ' + app.project.getProject().version
+    //}
     this.writeDoc(codeWriter, doc, options)
 
     // Modifiers
