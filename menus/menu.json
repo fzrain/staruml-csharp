@@ -6,12 +6,8 @@
         {
           "label": "驰亚代码生成器(至尊版)",
           "id": "tools.csharp",
-          "submenu": [
-            { "label": "生成公司框架相关的所有代码", "id": "tools.csharp.generate", "command": "csharp:generate" },
-            { "label": "仅生成领域模型(未实现)", "id": "tools.csharp.generate", "command": "csharp:generate" },
-            { "type": "separator" },
-            { "label": "插件配置", "id": "tools.csharp.configure", "command": "csharp:configure" }
-          ]
+          "command": "csharp:generate"
+     
         }
       ]
     }
